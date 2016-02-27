@@ -1,0 +1,266 @@
+﻿using System.Linq;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+namespace Assets.Scripts.Utils.Editor
+{
+    public class ButtonSoundsEditor : EditorWindow
+    {
+        private AudioSource _audioSource;
+        private AudioClip _clickSound;
+        private Vector2 _scrollPosition;
+        private Button _selectedButton;
+
+        [MenuItem("Window/Utils/Button sounds editor")]
+        public static void OpenEditor()
+        {
+            ButtonSoundsEditor window = GetWindow<ButtonSoundsEditor>();
+            window.titleContent = new GUIContent("Button sounds editor");
+            window.Initialize();
+            window.Show();
+        }
+
+        private void Initialize()
+        {
+            Button[] buttons = GetButtons();
+            ButtonClickSound[] clickSounds = GetButtonClickSounds(buttons);
+            _audioSource = GetFirstAudioSource(clickSounds);
+            _clickSound = GetFirstClickSound(clickSounds);
+        }
+
+        private Button[] GetButtons()
+        {
+            return Resources.FindObjectsOfTypeAll<Button>().Where(_ => PrefabUtility.GetPrefabType(_) != PrefabType.Prefab).ToArray();
+        }
+
+        private ButtonClickSound[] GetButtonClickSounds(Button[] buttons)
+        {
+            return buttons.Select(_ => _.GetComponent<ButtonClickSound>()).Where(_ => _ != null).ToArray();
+        }
+
+        public void OnGUI()
+        {
+            Button[] buttons = GetButtons();
+
+            GUILayout.BeginVertical();
+            DrawTopPanel();
+            DrawMiddlePanel(buttons);
+            DrawBottomPanel(buttons);
+            GUILayout.EndVertical();
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        }
+
+        #region Top panel
+
+        private void DrawTopPanel()
+        {
+            GUILayout.BeginVertical("Box");
+            GUILayout.Space(5);
+
+            DrawAudioSourceSettings();
+
+            _clickSound = EditorGUILayout.ObjectField("Click sound:", _clickSound, typeof(AudioClip), false, GUILayout.Width(400)) as AudioClip;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            //if (GUILayout.Button("Apply to all", GUILayout.Width(100)))
+            //{
+            //    foreach (ButtonClickSound clickSound in clickSounds)
+            //    {
+            //        clickSound.AudioSource = _audioSource;
+            //        clickSound.ClickSound = _clickSound;
+            //        EditorUtility.SetDirty(clickSound);
+            //    }
+            //}
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+            GUILayout.EndVertical();
+        }
+
+        private AudioSource GetFirstAudioSource(ButtonClickSound[] clickSounds)
+        {
+            ButtonClickSound buttonClickSound = clickSounds.FirstOrDefault(_ => _.AudioSource != null);
+            return buttonClickSound == null ? null : buttonClickSound.AudioSource;
+        }
+
+        private AudioClip GetFirstClickSound(ButtonClickSound[] clickSounds)
+        {
+            ButtonClickSound buttonClickSound = clickSounds.FirstOrDefault(_ => _.ClickSound != null);
+            return buttonClickSound == null ? null : buttonClickSound.ClickSound;
+        }
+
+        private void DrawAudioSourceSettings()
+        {
+            if (_audioSource == null)
+                DrawTip("Tip: All buttons sounds are played using single AudioSource. \nAssign an existing AudioSource from the current scene or create a new AudioSource using 'Create' button!");
+
+            GUILayout.BeginHorizontal();
+
+            _audioSource = EditorGUILayout.ObjectField("Audio Source:", _audioSource, typeof(AudioSource), true, GUILayout.Width(400)) as AudioSource;
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button(new GUIContent("Create", "Create new AudioSource"), GUILayout.Width(100)))
+            {
+                GameObject go = new GameObject("ButtonsAudioSource");
+                AudioSource audioSource = go.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+                _audioSource = audioSource;
+                Selection.activeGameObject = go;
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        #endregion
+
+        #region Middle panel
+
+        private void DrawMiddlePanel(Button[] buttons)
+        {
+            buttons = buttons.OrderBy(_ => GetTransformPath(_.transform)).ToArray();
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.BeginVertical();
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+            foreach (Button button in buttons)
+                DrawButtonSettings(button);
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            DrawSelectedButtonInfoPanel();
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawButtonSettings(Button button)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button(new GUIContent("S", "Select button in hierarchy"), GUILayout.Width(20)))
+                SelectButton(button);
+
+            GUILayout.Label(button.name, GUILayout.Width(100));
+
+            ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
+            if (clickSound == null)
+            {
+                if (GUILayout.Button(new GUIContent("Add", "Add 'ButtonClickSound' component to button."), GUILayout.Width(50)))
+                {
+                    AddClickSoundToButton(button);
+                    SelectButton(button);
+                }
+            }
+            else
+            {
+                clickSound.ClickSound = EditorGUILayout.ObjectField(clickSound.ClickSound, typeof(AudioClip), false, GUILayout.Width(200)) as AudioClip;
+                if (GUILayout.Button(new GUIContent("X", "Remove 'ButtonClickSound' component from button."), GUILayout.Width(20)))
+                {
+                    DestroyImmediate(clickSound);
+                    SelectButton(button);
+                }
+
+                if (clickSound.AudioSource == null)
+                {
+                    DrawTip("AudioSource is not assigned!");
+                }
+                else if (clickSound.ClickSound == null)
+                {
+                    DrawTip("ClickSound is not assigned!");
+                }
+                else
+                {
+                    if (GUILayout.Button(new GUIContent("Play", "Test assigned AudioClip."), GUILayout.Width(50)))
+                    {
+                        clickSound.AudioSource.PlayOneShot(clickSound.ClickSound);
+                        SelectButton(button);
+                    }
+                }
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void SelectButton(Button button)
+        {
+            Selection.activeObject = button;
+            _selectedButton = button;
+        }
+
+        private void AddClickSoundToButton(Button button)
+        {
+            ButtonClickSound buttonClickSound = button.gameObject.AddComponent<ButtonClickSound>();
+            buttonClickSound.AudioSource = _audioSource;
+            buttonClickSound.ClickSound = _clickSound;
+            EditorUtility.SetDirty(button.gameObject);
+            EditorUtility.SetDirty(buttonClickSound);
+        }
+
+        private void DrawSelectedButtonInfoPanel()
+        {
+            if (_selectedButton != null)
+            {
+                GUILayout.BeginVertical();
+
+                Image image = _selectedButton.GetComponent<Image>();
+                if (image != null)
+                    GUILayout.Box(image.sprite.texture);
+
+                Text textComponent = _selectedButton.GetComponentInChildren<Text>();
+                if (textComponent != null)
+                    GUILayout.Label(textComponent.text);
+
+                GUILayout.Label(GetTransformPath(_selectedButton.transform));
+
+                GUILayout.EndVertical();
+            }
+        }
+
+        #endregion
+
+        private void DrawBottomPanel(Button[] buttons)
+        {
+            GUILayout.BeginHorizontal("Box");
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Add click sound to all buttons"))
+            {
+                foreach (Button button in buttons.Where(_ => _.GetComponent<ButtonClickSound>() == null))
+                    AddClickSoundToButton(button);
+            }
+            if (GUILayout.Button("Clear all buttons"))
+            {
+                foreach (Button button in buttons)
+                {
+                    ButtonClickSound buttonClickSound = button.GetComponent<ButtonClickSound>();
+                    if (buttonClickSound != null)
+                    {
+                        DestroyImmediate(buttonClickSound);
+                        EditorUtility.SetDirty(button);
+                    }
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        private string GetTransformPath(Transform tr)
+        {
+            string path = tr.root.name;
+            if (tr != tr.root)
+                path += "/" + AnimationUtility.CalculateTransformPath(tr, tr.root);
+            return path;
+        }
+
+        private void DrawTip(string message)
+        {
+            GUI.skin.label.normal.textColor = Color.red;
+            GUILayout.Label(message);
+            GUI.skin.label.normal.textColor = Color.black;
+        }
+    }
+}
