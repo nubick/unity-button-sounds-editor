@@ -19,6 +19,7 @@ namespace Assets.Scripts.Utils.Editor
         {
             ButtonSoundsEditor window = GetWindow<ButtonSoundsEditor>();
             window.titleContent = new GUIContent("Button sounds editor");
+            window.minSize = new Vector2(800f, 600f);
             window.Initialize();
             window.Show();
         }
@@ -63,7 +64,7 @@ namespace Assets.Scripts.Utils.Editor
 
             DrawAudioSourceSettings();
 
-            _clickSound = EditorGUILayout.ObjectField("Click sound:", _clickSound, typeof(AudioClip), false, GUILayout.Width(400)) as AudioClip;
+            _clickSound = EditorGUILayout.ObjectField("Click Sound:", _clickSound, typeof(AudioClip), false, GUILayout.Width(400)) as AudioClip;
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -146,16 +147,16 @@ namespace Assets.Scripts.Utils.Editor
             if (GUILayout.Button(new GUIContent("S", "Select button in hierarchy"), GUILayout.Width(20)))
                 SelectButton(button);
 
-            GUILayout.Label(button.name, GUILayout.Width(100));
+            GUILayout.Label(button.name, GUILayout.Width(150));
 
             ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
             if (clickSound == null)
             {
                 if (GUILayout.Button(new GUIContent("Add", "Add 'ButtonClickSound' component to button."), GUILayout.Width(50)))
                 {
-                    AddClickSoundToButton(button);
+                    AddButtonClickSound(button);
                     SelectButton(button);
-                }
+                } 
             }
             else
             {
@@ -167,12 +168,12 @@ namespace Assets.Scripts.Utils.Editor
                 }
 
                 if (clickSound.AudioSource == null)
-                {
-                    DrawTip("AudioSource is not assigned!");
+                { 
+                    DrawTip("Audio Source is not assigned!");
                 }
                 else if (clickSound.ClickSound == null)
                 {
-                    DrawTip("ClickSound is not assigned!");
+                    DrawTip("Click Sound is not assigned!");
                 }
                 else
                 {
@@ -183,7 +184,7 @@ namespace Assets.Scripts.Utils.Editor
                     }
                 }
             }
-
+             
             GUILayout.EndHorizontal();
         }
 
@@ -193,12 +194,17 @@ namespace Assets.Scripts.Utils.Editor
             _selectedButton = button;
         }
 
-        private void AddClickSoundToButton(Button button)
+        private void AddButtonClickSound(Button button)
         {
             ButtonClickSound buttonClickSound = button.gameObject.AddComponent<ButtonClickSound>();
+            AssignClickSound(buttonClickSound);
+            EditorUtility.SetDirty(button.gameObject);
+        }
+
+        private void AssignClickSound(ButtonClickSound buttonClickSound)
+        {
             buttonClickSound.AudioSource = _audioSource;
             buttonClickSound.ClickSound = _clickSound;
-            EditorUtility.SetDirty(button.gameObject);
             EditorUtility.SetDirty(buttonClickSound);
         }
 
@@ -228,11 +234,24 @@ namespace Assets.Scripts.Utils.Editor
         {
             GUILayout.BeginHorizontal("Box");
             GUILayout.FlexibleSpace();
+
+            if(_clickSound == null)
+                GUI.enabled = false;
+
             if (GUILayout.Button("Add click sound to all buttons"))
             {
-                foreach (Button button in buttons.Where(_ => _.GetComponent<ButtonClickSound>() == null))
-                    AddClickSoundToButton(button);
+                foreach (Button button in buttons)
+                {
+                    ButtonClickSound buttonClickSound = button.GetComponent<ButtonClickSound>();
+                    if(buttonClickSound == null)
+                        AddButtonClickSound(button);
+                    else
+                        AssignClickSound(buttonClickSound);
+                }
             }
+
+            GUI.enabled = true;
+
             if (GUILayout.Button("Clear all buttons"))
             {
                 foreach (Button button in buttons)
