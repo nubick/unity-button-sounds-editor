@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Utils.Editor
+namespace Assets.ButtonSoundsEditor.Scripts.Editor
 {
     public class ButtonSoundsEditor : EditorWindow
     {
@@ -127,17 +127,17 @@ namespace Assets.Scripts.Utils.Editor
             buttons = buttons.OrderBy(_ => GetTransformPath(_.transform)).ToArray();
 
             GUILayout.BeginHorizontal();
+            DrawButtonsScrollView(buttons);
+            DrawSelectedButtonInfoPanel();
+            GUILayout.EndHorizontal();
+        }
 
-            GUILayout.BeginVertical();
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+        private void DrawButtonsScrollView(Button[] buttons)
+        {
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.MinWidth(500));
             foreach (Button button in buttons)
                 DrawButtonSettings(button);
             GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            DrawSelectedButtonInfoPanel();
-
-            GUILayout.EndHorizontal();
         }
 
         private void DrawButtonSettings(Button button)
@@ -147,7 +147,7 @@ namespace Assets.Scripts.Utils.Editor
             if (GUILayout.Button(new GUIContent("S", "Select button in hierarchy"), GUILayout.Width(20)))
                 SelectButton(button);
 
-            GUILayout.Label(button.name, GUILayout.Width(150));
+            GUILayout.Label(button.name, GUILayout.Width(125));
 
             ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
             if (clickSound == null)
@@ -212,7 +212,7 @@ namespace Assets.Scripts.Utils.Editor
         {
             if (_selectedButton != null)
             {
-                GUILayout.BeginVertical();
+                GUILayout.BeginVertical(GUILayout.Width(300));
 
                 Image image = _selectedButton.GetComponent<Image>();
                 if (image != null)
@@ -220,9 +220,9 @@ namespace Assets.Scripts.Utils.Editor
 
                 Text textComponent = _selectedButton.GetComponentInChildren<Text>();
                 if (textComponent != null)
-                    GUILayout.Label(textComponent.text);
+                    GUILayout.Label("Text:" + textComponent.text);
 
-                GUILayout.Label(GetTransformPath(_selectedButton.transform));
+                GUILayout.Label("Path:" + GetTransformPath(_selectedButton.transform), EditorStyles.wordWrappedLabel, GUILayout.Width(300));
 
                 GUILayout.EndVertical();
             }
