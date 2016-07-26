@@ -16,11 +16,10 @@ namespace Assets.ButtonSoundsEditor.Scripts.Editor
 
         [MenuItem("Window/Utils/Button sounds editor")]
         public static void OpenEditor()
-        {
+        { 
             ButtonSoundsEditor window = GetWindow<ButtonSoundsEditor>();
             window.titleContent = new GUIContent("Button sounds editor");
-            window.minSize = new Vector2(800f, 600f);
-            window.Initialize();
+            window.Initialize(); 
             window.Show();
         }
 
@@ -233,6 +232,9 @@ namespace Assets.ButtonSoundsEditor.Scripts.Editor
         private void DrawBottomPanel(Button[] buttons)
         {
             GUILayout.BeginHorizontal("Box");
+
+            DrawAuthorLink();
+
             GUILayout.FlexibleSpace();
 
             if(_clickSound == null)
@@ -279,6 +281,16 @@ namespace Assets.ButtonSoundsEditor.Scripts.Editor
         {
             GUI.skin.label.normal.textColor = Color.red;
             GUILayout.Label(message);
+            GUI.skin.label.normal.textColor = Color.black;
+        }
+
+        private void DrawAuthorLink()
+        {
+            GUI.skin.label.normal.textColor = Color.blue;
+            if(GUILayout.Button("Open editor web page"))
+            {
+                Application.OpenURL("https://nubick.ru/button-sounds-editor-for-unity/");
+            }
             GUI.skin.label.normal.textColor = Color.black;
         }
     }
