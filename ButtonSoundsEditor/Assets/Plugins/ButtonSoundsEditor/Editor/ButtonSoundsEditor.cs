@@ -143,10 +143,17 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
         {
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button(new GUIContent("S", "Select button in hierarchy"), GUILayout.Width(20)))
+
+            GUIStyle labelStyle = EditorStyles.label;
+            Color originalColor = labelStyle.normal.textColor;
+            if (button == _selectedButton)
+                labelStyle.normal.textColor = Color.cyan;
+            
+            if (GUILayout.Button(button.name, labelStyle, GUILayout.Width(125)))
                 SelectButton(button);
 
-            GUILayout.Label(button.name, GUILayout.Width(125));
+            labelStyle.normal.textColor = originalColor;
+
 
             ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
             if (clickSound == null)
@@ -288,12 +295,10 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
         private void DrawAuthorLink()
         {
-            GUI.skin.label.normal.textColor = Color.blue;
             if(GUILayout.Button("How To Use"))
             {
                 Application.OpenURL("https://nubick.ru/button-sounds-editor-for-unity/?ref=editor");
             }
-            GUI.skin.label.normal.textColor = Color.black;
         }
     }
 }
