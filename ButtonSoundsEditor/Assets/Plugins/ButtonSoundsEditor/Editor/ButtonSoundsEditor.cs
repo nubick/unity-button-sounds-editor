@@ -221,7 +221,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                 GUILayout.BeginVertical(GUILayout.Width(300));
 
                 Image image = _selectedButton.GetComponent<Image>();
-                if (image != null)
+                if (image != null && image.sprite != null)
                     GUILayout.Box(image.sprite.texture);
 
                 Text textComponent = _selectedButton.GetComponentInChildren<Text>();
