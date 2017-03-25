@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.ButtonSoundsEditor.Scripts
+namespace Assets.Plugins.ButtonSoundsEditor
 {
     [RequireComponent(typeof(Button))]
     public class ButtonClickSound : MonoBehaviour

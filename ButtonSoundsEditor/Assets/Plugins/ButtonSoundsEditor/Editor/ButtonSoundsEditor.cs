@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Assets.ButtonSoundsEditor.Scripts.Editor
+namespace Assets.Plugins.ButtonSoundsEditor.Editor
 {
     public class ButtonSoundsEditor : EditorWindow
     {
@@ -235,6 +235,8 @@ namespace Assets.ButtonSoundsEditor.Scripts.Editor
 
             DrawAuthorLink();
 
+            GUILayout.Label("Version 1.1", EditorStyles.whiteLabel);
+
             GUILayout.FlexibleSpace();
 
             if(_clickSound == null)
@@ -287,9 +289,9 @@ namespace Assets.ButtonSoundsEditor.Scripts.Editor
         private void DrawAuthorLink()
         {
             GUI.skin.label.normal.textColor = Color.blue;
-            if(GUILayout.Button("Open editor web page"))
+            if(GUILayout.Button("How To Use"))
             {
-                Application.OpenURL("https://nubick.ru/button-sounds-editor-for-unity/");
+                Application.OpenURL("https://nubick.ru/button-sounds-editor-for-unity/?ref=editor");
             }
             GUI.skin.label.normal.textColor = Color.black;
         }
