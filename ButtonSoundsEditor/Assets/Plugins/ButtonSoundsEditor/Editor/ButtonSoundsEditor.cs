@@ -68,6 +68,13 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUILayout.Label("Click sound", EditorStyles.whiteLabel, GUILayout.Width(120));
             _clickSound = EditorGUILayout.ObjectField(_clickSound, typeof(AudioClip), false, GUILayout.Width(200)) as AudioClip;
 
+            bool isEnabled = _audioSource != null && _clickSound != null;
+            EditorGUI.BeginDisabledGroup(!isEnabled);
+            GUILayout.Space(25f);
+            if (GUILayout.Button(new GUIContent("Play", "Test assigned AudioClip."), GUILayout.Width(50)))
+                _audioSource.PlayOneShot(_clickSound);
+            EditorGUI.EndDisabledGroup();
+
             GUILayout.EndHorizontal();
 
             GUILayout.Space(5);
@@ -96,9 +103,8 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUILayout.Label("Audio source", EditorStyles.whiteLabel, GUILayout.Width(120));
             _audioSource = EditorGUILayout.ObjectField(_audioSource, typeof(AudioSource), true, GUILayout.Width(200)) as AudioSource;
 
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button(new GUIContent("Create", "Create new AudioSource"), GUILayout.Width(100)))
+            GUILayout.Space(25f);
+            if (GUILayout.Button(new GUIContent("Create", "Create new AudioSource"), GUILayout.Width(50)))
             {
                 GameObject go = new GameObject("ButtonsAudioSource");
                 AudioSource audioSource = go.AddComponent<AudioSource>();
