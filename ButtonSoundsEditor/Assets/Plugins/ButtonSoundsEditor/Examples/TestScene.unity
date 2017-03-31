@@ -191,7 +191,6 @@ GameObject:
   - component: {fileID: 66031468}
   - component: {fileID: 66031467}
   - component: {fileID: 66031466}
-  - component: {fileID: 66031469}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -292,19 +291,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 66031464}
---- !u!114 &66031469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 66031464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db7d01bc933f27143a65ab22c43e8d6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudioSource: {fileID: 1438018807}
-  ClickSound: {fileID: 8300000, guid: dc5a659a793d5431b82cbc8a4c9d5f14, type: 3}
 --- !u!1 &256048482
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,7 +742,6 @@ GameObject:
   - component: {fileID: 586176733}
   - component: {fileID: 586176732}
   - component: {fileID: 586176731}
-  - component: {fileID: 586176734}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Untagged
@@ -857,19 +842,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 586176729}
---- !u!114 &586176734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 586176729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db7d01bc933f27143a65ab22c43e8d6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudioSource: {fileID: 1438018807}
-  ClickSound: {fileID: 8300000, guid: f3f518d7c226641da86630eb8a52b3b1, type: 3}
 --- !u!1 &603536734
 GameObject:
   m_ObjectHideFlags: 0
@@ -2825,7 +2797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioSource: {fileID: 1438018807}
-  ClickSound: {fileID: 8300000, guid: dc5a659a793d5431b82cbc8a4c9d5f14, type: 3}
+  ClickSound: {fileID: 8300000, guid: 03412a8f229a9415caafabb2faccc4f3, type: 3}
 --- !u!1 &1794965162
 GameObject:
   m_ObjectHideFlags: 0

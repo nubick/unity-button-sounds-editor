@@ -62,20 +62,12 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUILayout.Space(5);
 
             DrawAudioSourceSettings();
-
-            _clickSound = EditorGUILayout.ObjectField("Click Sound:", _clickSound, typeof(AudioClip), false, GUILayout.Width(400)) as AudioClip;
-
+          
             GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            //if (GUILayout.Button("Apply to all", GUILayout.Width(100)))
-            //{
-            //    foreach (ButtonClickSound clickSound in clickSounds)
-            //    {
-            //        clickSound.AudioSource = _audioSource;
-            //        clickSound.ClickSound = _clickSound;
-            //        EditorUtility.SetDirty(clickSound);
-            //    }
-            //}
+
+            GUILayout.Label("Click sound", EditorStyles.whiteLabel, GUILayout.Width(120));
+            _clickSound = EditorGUILayout.ObjectField(_clickSound, typeof(AudioClip), false, GUILayout.Width(200)) as AudioClip;
+
             GUILayout.EndHorizontal();
 
             GUILayout.Space(5);
@@ -101,7 +93,8 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
             GUILayout.BeginHorizontal();
 
-            _audioSource = EditorGUILayout.ObjectField("Audio Source:", _audioSource, typeof(AudioSource), true, GUILayout.Width(400)) as AudioSource;
+            GUILayout.Label("Audio source", EditorStyles.whiteLabel, GUILayout.Width(120));
+            _audioSource = EditorGUILayout.ObjectField(_audioSource, typeof(AudioSource), true, GUILayout.Width(200)) as AudioSource;
 
             GUILayout.FlexibleSpace();
 
@@ -135,14 +128,16 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.MinWidth(500));
             foreach (Button button in buttons)
+            {
                 DrawButtonSettings(button);
+                DrawButtonSettingsLine2(button);
+            }
             GUILayout.EndScrollView();
         }
 
         private void DrawButtonSettings(Button button)
         {
             GUILayout.BeginHorizontal();
-
 
             GUIStyle labelStyle = EditorStyles.label;
             Color originalColor = labelStyle.normal.textColor;
@@ -158,6 +153,8 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
             if (clickSound == null)
             {
+                GUILayout.Label("No any click sound!", EditorStyles.whiteLabel, GUILayout.Width(225));
+
                 if (GUILayout.Button(new GUIContent("Add", "Add 'ButtonClickSound' component to button."), GUILayout.Width(50)))
                 {
                     AddButtonClickSound(button);
@@ -173,13 +170,19 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                     SelectButton(button);
                 }
 
-                if (clickSound.AudioSource == null)
-                { 
-                    DrawTip("Audio Source is not assigned!");
-                }
-                else if (clickSound.ClickSound == null)
+                bool hasErrors = clickSound.AudioSource == null || clickSound.ClickSound == null;
+                if (hasErrors)
                 {
-                    DrawTip("Click Sound is not assigned!");
+                    if (GUILayout.Button("Fix", GUILayout.Width(50)))
+                    {
+                        if (clickSound.AudioSource == null)
+                            clickSound.AudioSource = _audioSource;
+
+                        if (clickSound.ClickSound == null)
+                            clickSound.ClickSound = _clickSound;
+
+                        EditorUtility.SetDirty(clickSound);
+                    }
                 }
                 else
                 {
@@ -191,6 +194,25 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                 }
             }
              
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawButtonSettingsLine2(Button button)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(135f);
+            ButtonClickSound clickSound = button.GetComponent<ButtonClickSound>();
+            if (clickSound != null)
+            {
+                if (clickSound.AudioSource == null)
+                {
+                    DrawTip("Audio Source is not assigned!");
+                }
+                else if (clickSound.ClickSound == null)
+                {
+                    DrawTip("Click Sound is not assigned!");
+                }
+            }
             GUILayout.EndHorizontal();
         }
 
