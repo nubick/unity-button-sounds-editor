@@ -6,6 +6,9 @@ engine.
 
 Editor helps to assign click sound to all buttons in the current scene. It lists all buttons in one window, and it allows to edit sounds of those buttons.
 
+Version 1.1:
+Possibility to add click sound for any game object which has EventTrigger with PointerClick event.
+
 Downloads
 ----------
 Please check out 
