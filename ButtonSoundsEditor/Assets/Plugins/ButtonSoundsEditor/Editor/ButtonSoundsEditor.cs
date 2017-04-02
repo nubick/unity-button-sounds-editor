@@ -109,7 +109,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
           
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("Click sound", EditorStyles.whiteLabel, GUILayout.Width(120));
+            GUILayout.Label("Click sound", GUILayout.Width(120));
             _clickSound = EditorGUILayout.ObjectField(_clickSound, typeof(AudioClip), false, GUILayout.Width(200)) as AudioClip;
 
             bool isEnabled = _audioSource != null && _clickSound != null;
@@ -133,7 +133,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("Audio source", EditorStyles.whiteLabel, GUILayout.Width(120));
+            GUILayout.Label("Audio source", GUILayout.Width(120));
             _audioSource = EditorGUILayout.ObjectField(_audioSource, typeof(AudioSource), true, GUILayout.Width(200)) as AudioSource;
 
             GUILayout.Space(25f);
@@ -269,7 +269,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUIStyle labelStyle = EditorStyles.label;
             Color originalColor = labelStyle.normal.textColor;
             if (candidate == _selectedCandidate)
-                labelStyle.normal.textColor = Color.cyan;
+                labelStyle.normal.textColor = new Color(0f, 0.5f, 0.5f);
 
             if (GUILayout.Button(candidate.name, labelStyle, GUILayout.Width(125)))
                 SelectButton(candidate);
@@ -346,7 +346,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
             DrawAuthorLink();
 
-            GUILayout.Label("Version 1.1", EditorStyles.whiteLabel);
+            GUILayout.Label("Version 1.1");
 
             GUILayout.FlexibleSpace();
 
