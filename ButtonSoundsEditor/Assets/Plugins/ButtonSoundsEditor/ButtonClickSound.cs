@@ -1,30 +1,16 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Assets.Plugins.ButtonSoundsEditor
 {
-    public class ButtonClickSound : MonoBehaviour
+    public class ButtonClickSound : MonoBehaviour, IPointerClickHandler
     {
         public AudioSource AudioSource;
         public AudioClip ClickSound;
 
-        public void Awake()
+        public void OnPointerClick(PointerEventData eventData)
         {
-            Button button = GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(PlayClickSound);
-            }
-
-            EventTrigger eventTrigger = GetComponent<EventTrigger>();
-            if (eventTrigger != null)
-            {
-                EventTrigger.Entry clickEntry = eventTrigger.triggers.SingleOrDefault(_ => _.eventID == EventTriggerType.PointerClick);
-                if (clickEntry != null)
-                    clickEntry.callback.AddListener(_ => PlayClickSound());
-            }
+            PlayClickSound();
         }
 
         private void PlayClickSound()
